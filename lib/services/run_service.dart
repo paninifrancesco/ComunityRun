@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
+import 'dart:math' as math;
 import '../models/run.dart';
 import 'firestore_service.dart';
 
@@ -170,11 +171,12 @@ class RunService {
       if (latitude != null && longitude != null && radiusKm != null) {
         final center = _geo.point(latitude: latitude, longitude: longitude);
         runs = runs.where((run) {
-          final distance = _geo.distance(
-            lat1: center.latitude,
-            lng1: center.longitude,
-            lat2: run.startLocation.latitude,
-            lng2: run.startLocation.longitude,
+          // Calculate distance using Haversine formula
+          final distance = _calculateDistance(
+            center.latitude,
+            center.longitude,
+            run.startLocation.latitude,
+            run.startLocation.longitude,
           );
           return distance <= radiusKm;
         }).toList();
@@ -229,6 +231,27 @@ class RunService {
     } catch (e) {
       throw RunServiceException('Failed to get available spots: ${e.toString()}');
     }
+  }
+
+  /// Calculate distance between two coordinates using Haversine formula
+  /// Returns distance in kilometers
+  double _calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+    const double earthRadius = 6371; // Earth's radius in kilometers
+    
+    final double dLat = _degreesToRadians(lat2 - lat1);
+    final double dLng = _degreesToRadians(lng2 - lng1);
+    
+    final double a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_degreesToRadians(lat1)) * math.cos(_degreesToRadians(lat2)) *
+        math.sin(dLng / 2) * math.sin(dLng / 2);
+    
+    final double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+    
+    return earthRadius * c;
+  }
+
+  double _degreesToRadians(double degrees) {
+    return degrees * (math.pi / 180);
   }
 }
 

@@ -18,7 +18,15 @@
       "Bash(chmod:*)",
       "Bash(firebase deploy:*)",
       "Bash(npm install:*)",
-      "Bash(npx firebase deploy:*)"
+      "Bash(npx firebase deploy:*)",
+      "Bash(dart analyze:*)",
+      "Bash(dart run:*)",
+      "Bash(rm:*)",
+      "Bash(grep:*)",
+      "Bash(timeout 60 flutter build:*)",
+      "Bash(timeout 30 flutter build:*)",
+      "Bash(dart compile:*)",
+      "Bash(./gradlew:*)"
     ],
     "deny": []
   }
