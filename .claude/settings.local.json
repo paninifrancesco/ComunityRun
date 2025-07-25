@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter create:*)",
+      "Bash(flutter:*)",
+      "Bash(mkdir:*)",
+      "Bash(sudo apt:*)",
+      "Bash(sudo apt install:*)",
+      "Bash(wget:*)",
+      "Bash(adb:*)",
+      "Bash(echo $ANDROID_SDK_ROOT)",
+      "Bash(export:*)",
+      "Bash(export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools)",
+      "Bash(echo:*)",
+      "Bash(ls:*)",
+      "Bash(\"/mnt/c/Users/paninfra/AppData/Local/Android/Sdk/platform-tools/adb.exe\" devices)",
+      "Bash(ln:*)",
+      "Bash(chmod:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(npm install:*)",
+      "Bash(npx firebase deploy:*)"
+    ],
+    "deny": []
+  }
+}

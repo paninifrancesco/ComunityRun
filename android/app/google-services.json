@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "295066464051",
+    "project_id": "communityrun-708bf",
+    "storage_bucket": "communityrun-708bf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295066464051:android:fd6fea295b89ab83f6d846",
+        "android_client_info": {
+          "package_name": "com.communityrun.communityrun"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmR-8ARfQdvdu93EhqB3G-Zblpe1AyY1E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
