@@ -13,6 +13,7 @@ import '../screens/profile/profile_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/chat/chat_screen.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/messages/messages_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -68,6 +69,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/discover',
             name: 'discover',
             builder: (context, state) => const RunDiscoveryScreen(),
+          ),
+          GoRoute(
+            path: '/messages',
+            name: 'messages',
+            builder: (context, state) => const MessagesScreen(),
           ),
           GoRoute(
             path: '/profile',
@@ -126,6 +132,10 @@ Widget _buildBottomNavBar(BuildContext context, GoRouterState state) {
         label: 'Discover',
       ),
       BottomNavigationBarItem(
+        icon: Icon(Icons.chat_bubble_outline),
+        label: 'Messages',
+      ),
+      BottomNavigationBarItem(
         icon: Icon(Icons.person),
         label: 'Profile',
       ),
@@ -139,8 +149,10 @@ int _getSelectedIndex(String fullPath) {
       return 0;
     case '/discover':
       return 1;
-    case '/profile':
+    case '/messages':
       return 2;
+    case '/profile':
+      return 3;
     default:
       return 0;
   }
@@ -155,6 +167,9 @@ void _onBottomNavTap(BuildContext context, int index) {
       context.go('/discover');
       break;
     case 2:
+      context.go('/messages');
+      break;
+    case 3:
       context.go('/profile');
       break;
   }
