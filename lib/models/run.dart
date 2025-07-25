@@ -17,6 +17,8 @@ class Run {
   final List<String> participants;
   final List<String> waitingList;
   final String difficulty;
+  final String runType;
+  final String language;
   final List<String> tags;
   final bool isPublic;
   final bool allowWaitingList;
@@ -43,6 +45,8 @@ class Run {
     this.participants = const [],
     this.waitingList = const [],
     this.difficulty = 'moderate',
+    this.runType = 'Easy Run',
+    this.language = 'English',
     this.tags = const [],
     this.isPublic = true,
     this.allowWaitingList = true,
@@ -71,6 +75,8 @@ class Run {
       'participants': participants,
       'waitingList': waitingList,
       'difficulty': difficulty,
+      'runType': runType,
+      'language': language,
       'tags': tags,
       'isPublic': isPublic,
       'allowWaitingList': allowWaitingList,
@@ -104,6 +110,8 @@ class Run {
       participants: List<String>.from(map['participants'] ?? []),
       waitingList: List<String>.from(map['waitingList'] ?? []),
       difficulty: map['difficulty'] ?? 'moderate',
+      runType: map['runType'] ?? 'Easy Run',
+      language: map['language'] ?? 'English',
       tags: List<String>.from(map['tags'] ?? []),
       isPublic: map['isPublic'] ?? true,
       allowWaitingList: map['allowWaitingList'] ?? true,
@@ -132,6 +140,8 @@ class Run {
     List<String>? participants,
     List<String>? waitingList,
     String? difficulty,
+    String? runType,
+    String? language,
     List<String>? tags,
     bool? isPublic,
     bool? allowWaitingList,
@@ -157,6 +167,8 @@ class Run {
       participants: participants ?? this.participants,
       waitingList: waitingList ?? this.waitingList,
       difficulty: difficulty ?? this.difficulty,
+      runType: runType ?? this.runType,
+      language: language ?? this.language,
       tags: tags ?? this.tags,
       isPublic: isPublic ?? this.isPublic,
       allowWaitingList: allowWaitingList ?? this.allowWaitingList,

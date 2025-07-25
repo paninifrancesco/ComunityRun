@@ -9,6 +9,7 @@ import '../../services/message_service.dart';
 import '../../models/run.dart';
 import '../../models/user_profile.dart';
 import '../../widgets/run_card.dart';
+import '../runs/filter_screen.dart';
 
 // Provider for user location
 final userLocationProvider = FutureProvider<Position?>((ref) async {
@@ -36,22 +37,24 @@ final userLocationProvider = FutureProvider<Position?>((ref) async {
   }
 });
 
-// Provider for nearby runs
+// Provider for nearby runs with filters
 final nearbyRunsProvider = StreamProvider.family<List<Run>, Position?>((ref, position) {
   if (position == null) {
     return Stream.value(<Run>[]);
   }
   
   final runService = ref.read(runServiceProvider);
+  final filters = ref.watch(runFiltersProvider);
+  
   return runService.getNearbyRuns(
     latitude: position.latitude,
     longitude: position.longitude,
-    radiusKm: 10.0, // Default 10km radius
-    limit: 20,
+    radiusKm: filters.radiusKm,
+    limit: 50, // Increased limit for filtering
   );
 });
 
-// Provider for filtering radius
+// Provider for filtering radius (kept for backward compatibility)
 final filterRadiusProvider = StateProvider<double>((ref) => 10.0);
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -82,9 +85,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: const Text('Nearby Runs'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.tune),
-            onPressed: () => _showFilterDialog(context),
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.tune),
+                onPressed: () => _navigateToFilterScreen(),
+              ),
+              Consumer(
+                builder: (context, ref, child) {
+                  final filters = ref.watch(runFiltersProvider);
+                  final activeCount = filters.activeFilterCount;
+                  if (activeCount > 0) {
+                    return Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          activeCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
           ),
           IconButton(
             icon: const Icon(Icons.settings),
@@ -126,7 +166,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
         final nearbyRuns = ref.watch(nearbyRunsProvider(position));
         return nearbyRuns.when(
-          data: (runs) => _buildRunsListView(runs, user, position),
+          data: (runs) {
+            final filteredRuns = _applyFiltersAndSorting(runs);
+            return _buildRunsListView(filteredRuns, user, position);
+          },
           loading: () => _buildLoadingState(),
           error: (error, stack) => _buildErrorState(error),
         );
@@ -166,30 +209,109 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildLocationHeader(Position position) {
-    final filterRadius = ref.watch(filterRadiusProvider);
+    final filters = ref.watch(runFiltersProvider);
     
     return Container(
       padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryColor.withOpacity(0.1),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.location_on,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Showing runs within ${filters.radiusKm.toStringAsFixed(0)}km',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => _navigateToFilterScreen(),
+                child: Text(
+                  filters.activeFilterCount > 0 
+                      ? 'Filters (${filters.activeFilterCount})'
+                      : 'Filter',
+                ),
+              ),
+            ],
+          ),
+          if (filters.activeFilterCount > 0) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: _buildActiveFilterChips(filters),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildActiveFilterChips(RunFilters filters) {
+    List<Widget> chips = [];
+
+    if (filters.startDate != null || filters.endDate != null) {
+      chips.add(_buildFilterChip('Date Range', Icons.date_range));
+    }
+    if (filters.earliestTime != null || filters.latestTime != null) {
+      chips.add(_buildFilterChip('Time', Icons.access_time));
+    }
+    if (filters.minDistance > 0.0 || filters.maxDistance < 50.0) {
+      chips.add(_buildFilterChip('Distance', Icons.straighten));
+    }
+    if (filters.minPace != null || filters.maxPace != null) {
+      chips.add(_buildFilterChip('Pace', Icons.speed));
+    }
+    if (filters.runTypes.isNotEmpty) {
+      chips.add(_buildFilterChip('Run Types (${filters.runTypes.length})', Icons.directions_run));
+    }
+    if (filters.difficulties.isNotEmpty) {
+      chips.add(_buildFilterChip('Difficulty (${filters.difficulties.length})', Icons.trending_up));
+    }
+    if (filters.availableSpotsOnly) {
+      chips.add(_buildFilterChip('Available Spots', Icons.group));
+    }
+    if (filters.language != null) {
+      chips.add(_buildFilterChip('Language', Icons.language));
+    }
+    if (filters.sortBy != RunSortOption.distance) {
+      chips.add(_buildFilterChip('Sort: ${filters.sortBy.displayName}', Icons.sort));
+    }
+
+    return chips;
+  }
+
+  Widget _buildFilterChip(String label, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.location_on,
+            icon,
+            size: 14,
             color: Theme.of(context).primaryColor,
-            size: 20,
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              'Showing runs within ${filterRadius.toStringAsFixed(0)}km',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).primaryColor,
-              ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).primaryColor,
+              fontWeight: FontWeight.w500,
             ),
-          ),
-          TextButton(
-            onPressed: () => _showFilterDialog(context),
-            child: const Text('Change'),
           ),
         ],
       ),
@@ -378,59 +500,113 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void _showFilterDialog(BuildContext context) {
-    final currentRadius = ref.read(filterRadiusProvider);
-    double selectedRadius = currentRadius;
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Filter Runs'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Search radius:'),
-            const SizedBox(height: 16),
-            StatefulBuilder(
-              builder: (context, setState) {
-                return Column(
-                  children: [
-                    Slider(
-                      value: selectedRadius,
-                      min: 1.0,
-                      max: 50.0,
-                      divisions: 49,
-                      label: '${selectedRadius.toStringAsFixed(0)}km',
-                      onChanged: (value) {
-                        setState(() {
-                          selectedRadius = value;
-                        });
-                      },
-                    ),
-                    Text(
-                      '${selectedRadius.toStringAsFixed(0)} kilometers',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              ref.read(filterRadiusProvider.notifier).state = selectedRadius;
-              Navigator.of(context).pop();
-            },
-            child: const Text('Apply'),
-          ),
-        ],
+  List<Run> _applyFiltersAndSorting(List<Run> runs) {
+    final filters = ref.read(runFiltersProvider);
+    List<Run> filteredRuns = runs.where((run) {
+      // Date range filter
+      if (filters.startDate != null) {
+        if (run.dateTime.isBefore(filters.startDate!)) {
+          return false;
+        }
+      }
+      if (filters.endDate != null) {
+        if (run.dateTime.isAfter(filters.endDate!)) {
+          return false;
+        }
+      }
+
+      // Time of day filter
+      if (filters.earliestTime != null) {
+        final runTime = TimeOfDay.fromDateTime(run.dateTime);
+        final earliestMinutes = filters.earliestTime!.hour * 60 + filters.earliestTime!.minute;
+        final runMinutes = runTime.hour * 60 + runTime.minute;
+        if (runMinutes < earliestMinutes) {
+          return false;
+        }
+      }
+      if (filters.latestTime != null) {
+        final runTime = TimeOfDay.fromDateTime(run.dateTime);
+        final latestMinutes = filters.latestTime!.hour * 60 + filters.latestTime!.minute;
+        final runMinutes = runTime.hour * 60 + runTime.minute;
+        if (runMinutes > latestMinutes) {
+          return false;
+        }
+      }
+
+      // Distance filter
+      if (run.estimatedDistance != null) {
+        if (run.estimatedDistance! < filters.minDistance || 
+            run.estimatedDistance! > filters.maxDistance) {
+          return false;
+        }
+      }
+
+      // Pace filter (simplified - comparing strings)
+      if (filters.minPace != null && run.estimatedPace != null) {
+        if (run.estimatedPace!.compareTo(filters.minPace!) < 0) {
+          return false;
+        }
+      }
+      if (filters.maxPace != null && run.estimatedPace != null) {
+        if (run.estimatedPace!.compareTo(filters.maxPace!) > 0) {
+          return false;
+        }
+      }
+
+      // Run type filter
+      if (filters.runTypes.isNotEmpty) {
+        if (!filters.runTypes.contains(run.runType)) {
+          return false;
+        }
+      }
+
+      // Difficulty filter
+      if (filters.difficulties.isNotEmpty) {
+        if (!filters.difficulties.contains(run.difficulty)) {
+          return false;
+        }
+      }
+
+      // Available spots filter
+      if (filters.availableSpotsOnly) {
+        if (run.isFull) {
+          return false;
+        }
+      }
+
+      // Language filter
+      if (filters.language != null) {
+        if (run.language != filters.language) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+
+    // Apply sorting
+    switch (filters.sortBy) {
+      case RunSortOption.distance:
+        // Default sorting by distance (already sorted by FireStore geo query)
+        break;
+      case RunSortOption.startTime:
+        filteredRuns.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+        break;
+      case RunSortOption.recentlyCreated:
+        filteredRuns.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        break;
+      case RunSortOption.mostParticipants:
+        filteredRuns.sort((a, b) => b.participants.length.compareTo(a.participants.length));
+        break;
+    }
+
+    return filteredRuns;
+  }
+
+  void _navigateToFilterScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const FilterScreen(),
       ),
     );
   }
