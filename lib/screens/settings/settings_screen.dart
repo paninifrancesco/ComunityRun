@@ -1,125 +1,179 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../constants/app_theme.dart';
+import '../../utils/app_localizations_context.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(l10n.settings),
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.textPrimary,
       ),
       body: ListView(
+        padding: AppSpacing.screenPadding,
         children: [
-          const SizedBox(height: 16),
           _buildSettingsSection(
             context,
-            'Account',
+            l10n.account,
             [
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('Profile Settings'),
-                subtitle: const Text('Manage your profile information'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  // TODO: Navigate to profile settings
-                },
+              _buildSettingsItem(
+                context,
+                icon: Icons.person,
+                title: l10n.profileSettings,
+                subtitle: l10n.manageProfile,
+                onTap: () => context.push('/edit-profile'),
               ),
-              ListTile(
-                leading: const Icon(Icons.security),
-                title: const Text('Privacy'),
-                subtitle: const Text('Control your privacy settings'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  // TODO: Navigate to privacy settings  
-                },
+              _buildSettingsItem(
+                context,
+                icon: Icons.verified_user,
+                title: l10n.verification,
+                subtitle: l10n.verifyAccount,
+                onTap: () => context.push('/verification'),
+              ),
+              _buildSettingsItem(
+                context,
+                icon: Icons.security,
+                title: l10n.privacy,
+                subtitle: l10n.privacyDescription,
+                onTap: () => context.push('/privacy-settings'),
+              ),
+              _buildSettingsItem(
+                context,
+                icon: Icons.shield,
+                title: l10n.safetyAndSecurity,
+                subtitle: l10n.manageSafety,
+                onTap: () => context.push('/safety'),
               ),
             ],
           ),
+          
           _buildSettingsSection(
             context,
-            'Notifications',
+            l10n.appPreferences,
             [
-              ListTile(
-                leading: const Icon(Icons.notifications),
-                title: const Text('Push Notifications'),
-                subtitle: const Text('Manage notification preferences'),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context,
+                icon: Icons.language,
+                title: l10n.language,
+                subtitle: l10n.chooseLanguage,
+                onTap: () => context.push('/language-settings'),
+              ),
+              _buildSettingsItem(
+                context,
+                icon: Icons.notifications,
+                title: l10n.notifications,
+                subtitle: l10n.manageNotifications,
                 onTap: () {
                   // TODO: Navigate to notification settings
                 },
               ),
+              _buildSettingsItem(
+                context,
+                icon: Icons.palette,
+                title: l10n.theme,
+                subtitle: l10n.themeDescription,
+                onTap: () {
+                  // TODO: Navigate to theme settings
+                },
+              ),
             ],
           ),
+          
           _buildSettingsSection(
             context,
-            'Running Preferences',
+            l10n.runningPreferences,
             [
-              ListTile(
-                leading: const Icon(Icons.schedule),
-                title: const Text('Preferred Times'),
-                subtitle: const Text('Set your preferred running times'),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context,
+                icon: Icons.schedule,
+                title: l10n.preferredTimes,
+                subtitle: l10n.setPreferredTimes,
                 onTap: () {
                   // TODO: Navigate to time preferences
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.speed),
-                title: const Text('Pace & Distance'),
-                subtitle: const Text('Configure your running preferences'),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context,
+                icon: Icons.speed,
+                title: l10n.paceAndDistance,
+                subtitle: l10n.configureRunning,
                 onTap: () {
                   // TODO: Navigate to pace/distance settings
                 },
               ),
             ],
           ),
+          
           _buildSettingsSection(
             context,
-            'Safety',
+            l10n.safety,
             [
-              ListTile(
-                leading: const Icon(Icons.emergency),
-                title: const Text('Emergency Contacts'),
-                subtitle: const Text('Manage emergency contact information'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  // TODO: Navigate to emergency contacts
-                },
+              _buildSettingsItem(
+                context,
+                icon: Icons.emergency,
+                title: l10n.emergencyContacts,
+                subtitle: l10n.manageEmergencyContacts,
+                onTap: () => context.push('/emergency-settings'),
               ),
-              ListTile(
-                leading: const Icon(Icons.location_on),
-                title: const Text('Location Sharing'),
-                subtitle: const Text('Control location sharing settings'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  // TODO: Navigate to location settings
-                },
+              _buildSettingsItem(
+                context,
+                icon: Icons.gps_fixed,
+                title: l10n.locationSharing,
+                subtitle: l10n.controlLocationSharing,
+                onTap: () => context.push('/privacy-settings'),
+              ),
+              _buildSettingsItem(
+                context,
+                icon: Icons.menu_book,
+                title: l10n.safetyGuidelines,
+                subtitle: l10n.learnSafetyTips,
+                onTap: () => context.push('/safety-guidelines'),
               ),
             ],
           ),
+          
           _buildSettingsSection(
             context,
-            'About',
+            l10n.about,
             [
-              ListTile(
-                leading: const Icon(Icons.info),
-                title: const Text('App Version'),
-                subtitle: const Text('1.0.0'),
+              _buildSettingsItem(
+                context,
+                icon: Icons.info,
+                title: l10n.appVersion,
+                subtitle: '1.0.0',
+                showArrow: false,
                 onTap: () {},
               ),
-              ListTile(
-                leading: const Icon(Icons.help),
-                title: const Text('Help & Support'),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context,
+                icon: Icons.help,
+                title: l10n.helpAndSupport,
+                subtitle: l10n.getHelp,
                 onTap: () {
                   // TODO: Navigate to help
                 },
               ),
+              _buildSettingsItem(
+                context,
+                icon: Icons.policy,
+                title: l10n.privacyPolicy,
+                subtitle: l10n.readPrivacyPolicy,
+                onTap: () {
+                  // TODO: Navigate to privacy policy
+                },
+              ),
             ],
           ),
+          
+          SizedBox(height: AppSpacing.xl),
         ],
       ),
     );
@@ -134,21 +188,92 @@ class SettingsScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: AppSpacing.sectionPadding,
           child: Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
+            style: AppTypography.h6.copyWith(
+              color: AppColors.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
         Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
+          color: AppColors.surface,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: AppBorderRadius.card,
+          ),
           child: Column(children: children),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: AppSpacing.lg),
       ],
+    );
+  }
+
+  Widget _buildSettingsItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool showArrow = true,
+    Widget? trailing,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppBorderRadius.card,
+        child: Padding(
+          padding: AppSpacing.listTilePadding,
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppBorderRadius.sm),
+                ),
+                child: Icon(
+                  icon,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+              ),
+              SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: AppTypography.bodyLarge.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.xs),
+                    Text(
+                      subtitle,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (trailing != null) 
+                trailing
+              else if (showArrow)
+                Icon(
+                  Icons.chevron_right,
+                  color: AppColors.textSecondary,
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

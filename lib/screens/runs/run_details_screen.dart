@@ -8,6 +8,11 @@ import '../../services/run_service.dart';
 import '../../services/user_profile_service.dart';
 import '../../services/message_service.dart';
 import '../../services/auth_service.dart';
+import '../../services/notification_service.dart';
+import '../../services/safety_service.dart';
+import 'edit_run_screen.dart';
+import 'participants_screen.dart';
+import '../profile/report_user_screen.dart';
 
 class RunDetailsScreen extends ConsumerStatefulWidget {
   final String runId;
@@ -105,6 +110,7 @@ class _RunDetailsScreenState extends ConsumerState<RunDetailsScreen> {
   }
 
   Widget _buildSliverAppBar(Run run, bool isUserCreator) {
+    final currentUser = ref.watch(currentUserProvider).value;
     return SliverAppBar(
       expandedHeight: 200.0,
       floating: false,
@@ -141,12 +147,7 @@ class _RunDetailsScreenState extends ConsumerState<RunDetailsScreen> {
         if (isUserCreator) ...[
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () {
-              // TODO: Navigate to edit run screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Edit functionality coming soon')),
-              );
-            },
+            onPressed: () => _navigateToEditRun(run.id),
           ),
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -160,6 +161,34 @@ class _RunDetailsScreenState extends ConsumerState<RunDetailsScreen> {
                 child: ListTile(
                   leading: Icon(Icons.delete, color: Colors.red),
                   title: Text('Delete Run'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+            ],
+          ),
+        ] else if (currentUser != null && run.creatorId != currentUser.uid) ...[
+          PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value == 'report') {
+                await _reportUser(run.creatorId, run.creatorName ?? 'Unknown User', run.id);
+              } else if (value == 'block') {
+                await _blockUser(run.creatorId, run.creatorName ?? 'Unknown User');
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'report',
+                child: ListTile(
+                  leading: Icon(Icons.report, color: Colors.orange),
+                  title: Text('Report User'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'block',
+                child: ListTile(
+                  leading: Icon(Icons.block, color: Colors.red),
+                  title: Text('Block User'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -469,7 +498,7 @@ class _RunDetailsScreenState extends ConsumerState<RunDetailsScreen> {
                 const Spacer(),
                 if (run.participants.isNotEmpty)
                   TextButton(
-                    onPressed: () => _showAllParticipants(run),
+                    onPressed: () => _navigateToParticipants(run.id),
                     child: const Text('View All'),
                   ),
               ],
@@ -939,12 +968,23 @@ class _RunDetailsScreenState extends ConsumerState<RunDetailsScreen> {
     try {
       final runService = ref.read(runServiceProvider);
       final messageService = ref.read(messageServiceProvider);
+      final notificationService = ref.read(notificationServiceProvider);
       final userProfile = await ref.read(userProfileServiceProvider).getUserProfileOnce(userId);
+      final run = await runService.getRunOnce(runId);
       
       await runService.joinRun(runId, userId);
       
-      if (userProfile != null) {
+      if (userProfile != null && run != null) {
+        // Send system message to chat
         await messageService.sendUserJoinedMessage(runId, userProfile.displayName);
+        
+        // Send notification to run creator
+        await notificationService.sendNewParticipantNotification(
+          runId: runId,
+          runTitle: run.title,
+          participantName: userProfile.displayName,
+          creatorUserId: run.creatorId,
+        );
       }
 
       if (mounted) {
@@ -1001,12 +1041,23 @@ class _RunDetailsScreenState extends ConsumerState<RunDetailsScreen> {
     try {
       final runService = ref.read(runServiceProvider);
       final messageService = ref.read(messageServiceProvider);
+      final notificationService = ref.read(notificationServiceProvider);
       final userProfile = await ref.read(userProfileServiceProvider).getUserProfileOnce(userId);
+      final run = await runService.getRunOnce(runId);
       
       await runService.leaveRun(runId, userId);
       
-      if (userProfile != null) {
+      if (userProfile != null && run != null) {
+        // Send system message to chat
         await messageService.sendUserLeftMessage(runId, userProfile.displayName);
+        
+        // Send notification to run creator
+        await notificationService.sendParticipantLeftNotification(
+          runId: runId,
+          runTitle: run.title,
+          participantName: userProfile.displayName,
+          creatorUserId: run.creatorId,
+        );
       }
 
       if (mounted) {
@@ -1032,6 +1083,32 @@ class _RunDetailsScreenState extends ConsumerState<RunDetailsScreen> {
     }
   }
 
+  Future<void> _navigateToEditRun(String runId) async {
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => EditRunScreen(runId: runId),
+      ),
+    );
+
+    // If edit was successful, show success message
+    if (result == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Run updated successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+
+  void _navigateToParticipants(String runId) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ParticipantsScreen(runId: runId),
+      ),
+    );
+  }
+
   Future<void> _deleteRun() async {
     try {
       final runService = ref.read(runServiceProvider);
@@ -1054,6 +1131,86 @@ class _RunDetailsScreenState extends ConsumerState<RunDetailsScreen> {
             backgroundColor: Colors.red,
           ),
         );
+      }
+    }
+  }
+
+  Future<void> _reportUser(String reportedUserId, String reportedUserName, String runId) async {
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => ReportUserScreen(
+          reportedUserId: reportedUserId,
+          reportedUserName: reportedUserName,
+          runId: runId,
+        ),
+      ),
+    );
+
+    if (result == true && mounted) {
+      // Report was submitted successfully
+      // The success message is shown in the ReportUserScreen
+    }
+  }
+
+  Future<void> _blockUser(String blockedUserId, String blockedUserName) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Block User'),
+        content: Text(
+          'Are you sure you want to block $blockedUserName? You will no longer see their runs and they cannot join your runs.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Block'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        final currentUser = ref.watch(currentUserProvider).value;
+        if (currentUser == null) return;
+
+        final safetyService = ref.read(safetyServiceProvider);
+        final success = await safetyService.blockUser(
+          blockerId: currentUser.uid,
+          blockedUserId: blockedUserId,
+        );
+
+        if (success && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('$blockedUserName has been blocked'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+          // Navigate back since the user is now blocked
+          Navigator.of(context).pop();
+        } else if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to block user'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }

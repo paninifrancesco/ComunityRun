@@ -1,0 +1,640 @@
+{
+  "@@locale": "en",
+  "appTitle": "CommunityRun",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "home": "Home",
+  "@home": {
+    "description": "Home tab label"
+  },
+
+  "discover": "Discover",
+  "@discover": {
+    "description": "Discover tab label"
+  },
+
+  "messages": "Messages",
+  "@messages": {
+    "description": "Messages tab label"
+  },
+
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile tab label"
+  },
+
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen title"
+  },
+
+  "account": "Account",
+  "@account": {
+    "description": "Account settings section"
+  },
+
+  "profileSettings": "Profile Settings",
+  "@profileSettings": {
+    "description": "Profile settings menu item"
+  },
+
+  "manageProfile": "Manage your profile information",
+  "@manageProfile": {
+    "description": "Profile settings description"
+  },
+
+  "verification": "Verification",
+  "@verification": {
+    "description": "Account verification menu item"
+  },
+
+  "verifyAccount": "Verify your account",
+  "@verifyAccount": {
+    "description": "Verification description"
+  },
+
+  "privacy": "Privacy",
+  "@privacy": {
+    "description": "Privacy settings menu item"
+  },
+
+  "privacyDescription": "Control your privacy settings",
+  "@privacyDescription": {
+    "description": "Privacy settings description"
+  },
+
+  "safetyAndSecurity": "Safety & Security",
+  "@safetyAndSecurity": {
+    "description": "Safety and security menu item"
+  },
+
+  "manageSafety": "Manage blocked users and safety settings",
+  "@manageSafety": {
+    "description": "Safety settings description"
+  },
+
+  "appPreferences": "App Preferences",
+  "@appPreferences": {
+    "description": "App preferences section"
+  },
+
+  "language": "Language",
+  "@language": {
+    "description": "Language settings menu item"
+  },
+
+  "chooseLanguage": "Choose your preferred language",
+  "@chooseLanguage": {
+    "description": "Language settings description"
+  },
+
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notification settings menu item"
+  },
+
+  "manageNotifications": "Manage notification preferences",
+  "@manageNotifications": {
+    "description": "Notification settings description"
+  },
+
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme settings menu item"
+  },
+
+  "themeDescription": "Choose light or dark theme",
+  "@themeDescription": {
+    "description": "Theme settings description"
+  },
+
+  "runningPreferences": "Running Preferences",
+  "@runningPreferences": {
+    "description": "Running preferences section"
+  },
+
+  "preferredTimes": "Preferred Times",
+  "@preferredTimes": {
+    "description": "Preferred times menu item"
+  },
+
+  "setPreferredTimes": "Set your preferred running times",
+  "@setPreferredTimes": {
+    "description": "Preferred times description"
+  },
+
+  "paceAndDistance": "Pace & Distance",
+  "@paceAndDistance": {
+    "description": "Pace and distance menu item"
+  },
+
+  "configureRunning": "Configure your running preferences",
+  "@configureRunning": {
+    "description": "Running preferences description"
+  },
+
+  "safety": "Safety",
+  "@safety": {
+    "description": "Safety section"
+  },
+
+  "emergencyContacts": "Emergency Contacts",
+  "@emergencyContacts": {
+    "description": "Emergency contacts menu item"
+  },
+
+  "manageEmergencyContacts": "Manage emergency contact information",
+  "@manageEmergencyContacts": {
+    "description": "Emergency contacts description"
+  },
+
+  "locationSharing": "Location Sharing",
+  "@locationSharing": {
+    "description": "Location sharing menu item"
+  },
+
+  "controlLocationSharing": "Control location sharing settings",
+  "@controlLocationSharing": {
+    "description": "Location sharing description"
+  },
+
+  "safetyGuidelines": "Safety Guidelines",
+  "@safetyGuidelines": {
+    "description": "Safety guidelines menu item"
+  },
+
+  "learnSafetyTips": "Learn important safety tips",
+  "@learnSafetyTips": {
+    "description": "Safety guidelines description"
+  },
+
+  "about": "About",
+  "@about": {
+    "description": "About section"
+  },
+
+  "appVersion": "App Version",
+  "@appVersion": {
+    "description": "App version menu item"
+  },
+
+  "helpAndSupport": "Help & Support",
+  "@helpAndSupport": {
+    "description": "Help and support menu item"
+  },
+
+  "getHelp": "Get help and support",
+  "@getHelp": {
+    "description": "Help and support description"
+  },
+
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy menu item"
+  },
+
+  "readPrivacyPolicy": "Read our privacy policy",
+  "@readPrivacyPolicy": {
+    "description": "Privacy policy description"
+  },
+
+  "nearbyRuns": "Nearby Runs",
+  "@nearbyRuns": {
+    "description": "Title for nearby runs section"
+  },
+
+  "pleaseSignIn": "Please sign in to view nearby runs",
+  "@pleaseSignIn": {
+    "description": "Message shown when user is not signed in"
+  },
+
+  "filters": "Filters",
+  "@filters": {
+    "description": "Filters button text"
+  },
+
+  "filter": "Filter",
+  "@filter": {
+    "description": "Filter button text"
+  },
+
+  "createRun": "Create Run",
+  "@createRun": {
+    "description": "Button to create a new run"
+  },
+
+  "joinRun": "Join Run",
+  "@joinRun": {
+    "description": "Button to join a run"
+  },
+
+  "leaveRun": "Leave Run",
+  "@leaveRun": {
+    "description": "Button to leave a run"
+  },
+
+  "runTitle": "Run Title",
+  "@runTitle": {
+    "description": "Label for run title input"
+  },
+
+  "runDescription": "Description",
+  "@runDescription": {
+    "description": "Label for run description input"
+  },
+
+  "date": "Date",
+  "@date": {
+    "description": "Label for date"
+  },
+
+  "time": "Time",
+  "@time": {
+    "description": "Label for time"
+  },
+
+  "location": "Location",
+  "@location": {
+    "description": "Label for location"
+  },
+
+  "distance": "Distance",
+  "@distance": {
+    "description": "Label for distance"
+  },
+
+  "pace": "Pace",
+  "@pace": {
+    "description": "Label for pace"
+  },
+
+  "difficulty": "Difficulty",
+  "@difficulty": {
+    "description": "Label for difficulty level"
+  },
+
+  "beginner": "Beginner",
+  "@beginner": {
+    "description": "Beginner difficulty level"
+  },
+
+  "intermediate": "Intermediate",
+  "@intermediate": {
+    "description": "Intermediate difficulty level"
+  },
+
+  "advanced": "Advanced",
+  "@advanced": {
+    "description": "Advanced difficulty level"
+  },
+
+  "runType": "Run Type",
+  "@runType": {
+    "description": "Label for run type"
+  },
+
+  "easy": "Easy",
+  "@easy": {
+    "description": "Easy run type"
+  },
+
+  "tempo": "Tempo",
+  "@tempo": {
+    "description": "Tempo run type"
+  },
+
+  "intervals": "Intervals",
+  "@intervals": {
+    "description": "Intervals run type"
+  },
+
+  "longRun": "Long Run",
+  "@longRun": {
+    "description": "Long run type"
+  },
+
+  "fartlek": "Fartlek",
+  "@fartlek": {
+    "description": "Fartlek run type"
+  },
+
+  "maxParticipants": "Max Participants",
+  "@maxParticipants": {
+    "description": "Label for maximum participants"
+  },
+
+  "participants": "Participants",
+  "@participants": {
+    "description": "Label for participants"
+  },
+
+  "participantsCount": "{count} / {max} participants",
+  "@participantsCount": {
+    "description": "Shows current participants vs maximum",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+
+  "spotsAvailable": "{count} spots available",
+  "@spotsAvailable": {
+    "description": "Shows available spots",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "runFull": "Run Full",
+  "@runFull": {
+    "description": "Indicates the run is full"
+  },
+
+  "waitlist": "Waitlist",
+  "@waitlist": {
+    "description": "Label for waitlist"
+  },
+
+  "joinWaitlist": "Join Waitlist",
+  "@joinWaitlist": {
+    "description": "Button to join waitlist"
+  },
+
+  "leaveWaitlist": "Leave Waitlist",
+  "@leaveWaitlist": {
+    "description": "Button to leave waitlist"
+  },
+
+  "chat": "Chat",
+  "@chat": {
+    "description": "Chat screen title"
+  },
+
+  "typeMessage": "Type a message...",
+  "@typeMessage": {
+    "description": "Placeholder for message input"
+  },
+
+  "send": "Send",
+  "@send": {
+    "description": "Send button"
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button"
+  },
+
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button"
+  },
+
+  "filter": "Filter",
+  "@filter": {
+    "description": "Filter button"
+  },
+
+  "search": "Search",
+  "@search": {
+    "description": "Search action"
+  },
+
+  "refresh": "Refresh",
+  "@refresh": {
+    "description": "Refresh action"
+  },
+
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading message"
+  },
+
+  "noRunsFound": "No runs found",
+  "@noRunsFound": {
+    "description": "Message when no runs are found"
+  },
+
+  "noRunsFoundDescription": "There are no runs in your area yet. Be the first to create one!",
+  "@noRunsFoundDescription": {
+    "description": "Description when no runs are found"
+  },
+
+  "errorOccurred": "An error occurred",
+  "@errorOccurred": {
+    "description": "Generic error message"
+  },
+
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "Try again button"
+  },
+
+  "networkError": "Network Error",
+  "@networkError": {
+    "description": "Network error title"
+  },
+
+  "networkErrorDescription": "Please check your internet connection and try again.",
+  "@networkErrorDescription": {
+    "description": "Network error description"
+  },
+
+  "locationPermissionRequired": "Location Permission Required",
+  "@locationPermissionRequired": {
+    "description": "Location permission error title"
+  },
+
+  "locationPermissionDescription": "Please enable location access to find nearby runs.",
+  "@locationPermissionDescription": {
+    "description": "Location permission error description"
+  },
+
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications screen title"
+  },
+
+  "safety": "Safety",
+  "@safety": {
+    "description": "Safety screen title"
+  },
+
+  "privacy": "Privacy",
+  "@privacy": {
+    "description": "Privacy screen title"
+  },
+
+  "emergency": "Emergency",
+  "@emergency": {
+    "description": "Emergency screen title"
+  },
+
+  "reportUser": "Report User",
+  "@reportUser": {
+    "description": "Report user action"
+  },
+
+  "blockUser": "Block User",
+  "@blockUser": {
+    "description": "Block user action"
+  },
+
+  "verification": "Verification",
+  "@verification": {
+    "description": "Verification screen title"
+  },
+
+  "phoneVerification": "Phone Verification",
+  "@phoneVerification": {
+    "description": "Phone verification title"
+  },
+
+  "emailVerification": "Email Verification",
+  "@emailVerification": {
+    "description": "Email verification title"
+  },
+
+  "stravaConnection": "Strava Connection",
+  "@stravaConnection": {
+    "description": "Strava connection title"
+  },
+
+  "emergencyContact": "Emergency Contact",
+  "@emergencyContact": {
+    "description": "Emergency contact title"
+  },
+
+  "emergencyContactName": "Contact Name",
+  "@emergencyContactName": {
+    "description": "Emergency contact name label"
+  },
+
+  "emergencyContactPhone": "Phone Number",
+  "@emergencyContactPhone": {
+    "description": "Emergency contact phone label"
+  },
+
+  "sosButton": "SOS",
+  "@sosButton": {
+    "description": "SOS button text"
+  },
+
+  "emergencyAlert": "Emergency Alert",
+  "@emergencyAlert": {
+    "description": "Emergency alert title"
+  },
+
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes confirmation"
+  },
+
+  "no": "No",
+  "@no": {
+    "description": "No confirmation"
+  },
+
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button"
+  },
+
+  "signOut": "Sign Out",
+  "@signOut": {
+    "description": "Sign out action"
+  },
+
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in action"
+  },
+
+  "welcome": "Welcome",
+  "@welcome": {
+    "description": "Welcome message"
+  },
+
+  "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "Get started button"
+  },
+
+  "next": "Next",
+  "@next": {
+    "description": "Next button"
+  },
+
+  "previous": "Previous",
+  "@previous": {
+    "description": "Previous button"
+  },
+
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button"
+  },
+
+  "done": "Done",
+  "@done": {
+    "description": "Done button"
+  },
+
+  "kmUnit": "km",
+  "@kmUnit": {
+    "description": "Kilometer unit"
+  },
+
+  "minPerKm": "min/km",
+  "@minPerKm": {
+    "description": "Minutes per kilometer unit"
+  },
+
+  "today": "Today",
+  "@today": {
+    "description": "Today"
+  },
+
+  "tomorrow": "Tomorrow",
+  "@tomorrow": {
+    "description": "Tomorrow"
+  },
+
+  "thisWeek": "This Week",
+  "@thisWeek": {
+    "description": "This week"
+  },
+
+  "morning": "Morning",
+  "@morning": {
+    "description": "Morning time period"
+  },
+
+  "afternoon": "Afternoon",
+  "@afternoon": {
+    "description": "Afternoon time period"
+  },
+
+  "evening": "Evening",
+  "@evening": {
+    "description": "Evening time period"
+  }
+}

@@ -9,6 +9,9 @@ import '../../services/message_service.dart';
 import '../../models/run.dart';
 import '../../models/user_profile.dart';
 import '../../widgets/run_card.dart';
+import '../../widgets/loading_widgets.dart';
+import '../../constants/app_theme.dart';
+import '../../utils/app_localizations_context.dart';
 import '../runs/filter_screen.dart';
 
 // Provider for user location
@@ -79,11 +82,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final currentUser = ref.watch(currentUserProvider);
     final userLocation = ref.watch(userLocationProvider);
     final filterRadius = ref.watch(filterRadiusProvider);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nearby Runs'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(l10n.nearbyRuns),
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.textPrimary,
         actions: [
           Stack(
             children: [
@@ -102,8 +107,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(8),
+                          color: AppColors.error,
+                          borderRadius: BorderRadius.circular(AppBorderRadius.xs),
                         ),
                         constraints: const BoxConstraints(
                           minWidth: 16,
@@ -111,9 +116,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         child: Text(
                           activeCount.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
+                          style: AppTypography.caption.copyWith(
+                            color: AppColors.textOnError,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
@@ -135,21 +139,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: currentUser.when(
         data: (user) {
           if (user == null) {
-            return const Center(
-              child: Text('Please sign in to view nearby runs'),
+            return Center(
+              child: Text(
+                l10n.pleaseSignIn,
+                style: AppTypography.bodyLarge.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
             );
           }
           return _buildRunsList(user);
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => LoadingStates.center(),
         error: (error, stack) => _buildErrorState(error),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/create-run'),
         icon: const Icon(Icons.add),
-        label: const Text('Create Run'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+        label: Text(l10n.createRun),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textOnPrimary,
       ),
     );
   }
@@ -170,11 +179,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             final filteredRuns = _applyFiltersAndSorting(runs);
             return _buildRunsListView(filteredRuns, user, position);
           },
-          loading: () => _buildLoadingState(),
+          loading: () => LoadingStates.listWithHeader(),
           error: (error, stack) => _buildErrorState(error),
         );
       },
-      loading: () => _buildLoadingState(),
+      loading: () => LoadingStates.center(),
       error: (error, stack) => _buildLocationErrorState(),
     );
   }
@@ -210,43 +219,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildLocationHeader(Position position) {
     final filters = ref.watch(runFiltersProvider);
+    final l10n = context.l10n;
     
     return Container(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryColor.withOpacity(0.1),
+      padding: AppSpacing.screenPadding,
+      color: AppColors.primary.withOpacity(0.1),
       child: Column(
         children: [
           Row(
             children: [
               Icon(
                 Icons.location_on,
-                color: Theme.of(context).primaryColor,
+                color: AppColors.primary,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   'Showing runs within ${filters.radiusKm.toStringAsFixed(0)}km',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).primaryColor,
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
               TextButton(
                 onPressed: () => _navigateToFilterScreen(),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                ),
                 child: Text(
                   filters.activeFilterCount > 0 
-                      ? 'Filters (${filters.activeFilterCount})'
-                      : 'Filter',
+                      ? '${l10n.filters} (${filters.activeFilterCount})'
+                      : l10n.filter,
+                  style: AppTypography.labelMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
           ),
           if (filters.activeFilterCount > 0) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: AppSpacing.sm),
             Wrap(
-              spacing: 8,
-              runSpacing: 4,
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
               children: _buildActiveFilterChips(filters),
             ),
           ],
@@ -291,10 +308,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildFilterChip(String label, IconData icon) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.primary.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(AppBorderRadius.lg),
+        border: Border.all(
+          color: AppColors.primary.withOpacity(0.3),
+          width: 1,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -302,15 +326,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Icon(
             icon,
             size: 14,
-            color: Theme.of(context).primaryColor,
+            color: AppColors.primary,
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: AppSpacing.xs),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).primaryColor,
-              fontWeight: FontWeight.w500,
+            style: AppTypography.caption.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],

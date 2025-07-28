@@ -343,6 +343,23 @@ class FirestoreService {
       throw FirestoreException('Failed to report user: ${e.toString()}');
     }
   }
+
+  // Additional generic methods needed by notification service
+  Future<void> addDocument(String collection, Map<String, dynamic> data) async {
+    try {
+      await _firestore.collection(collection).add(data);
+    } catch (e) {
+      throw FirestoreException('Failed to add document: ${e.toString()}');
+    }
+  }
+
+  Future<DocumentSnapshot> getDocument(String collection, String docId) async {
+    try {
+      return await _firestore.collection(collection).doc(docId).get();
+    } catch (e) {
+      throw FirestoreException('Failed to get document: ${e.toString()}');
+    }
+  }
 }
 
 class FirestoreException implements Exception {

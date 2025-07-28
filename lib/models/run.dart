@@ -4,6 +4,7 @@ import 'package:geoflutterfire2/geoflutterfire2.dart';
 class Run {
   final String id;
   final String creatorId;
+  final String? creatorName;
   final String title;
   final String? description;
   final DateTime dateTime;
@@ -32,6 +33,7 @@ class Run {
   const Run({
     required this.id,
     required this.creatorId,
+    this.creatorName,
     required this.title,
     this.description,
     required this.dateTime,
@@ -62,6 +64,7 @@ class Run {
     return {
       'id': id,
       'creatorId': creatorId,
+      'creatorName': creatorName,
       'title': title,
       'description': description,
       'dateTime': Timestamp.fromDate(dateTime),
@@ -94,6 +97,7 @@ class Run {
     return Run(
       id: documentId,
       creatorId: map['creatorId'] ?? '',
+      creatorName: map['creatorName'],
       title: map['title'] ?? '',
       description: map['description'],
       dateTime: (map['dateTime'] as Timestamp).toDate(),
@@ -127,6 +131,7 @@ class Run {
   }
 
   Run copyWith({
+    String? creatorName,
     String? title,
     String? description,
     DateTime? dateTime,
@@ -154,6 +159,7 @@ class Run {
     return Run(
       id: id,
       creatorId: creatorId,
+      creatorName: creatorName ?? this.creatorName,
       title: title ?? this.title,
       description: description ?? this.description,
       dateTime: dateTime ?? this.dateTime,

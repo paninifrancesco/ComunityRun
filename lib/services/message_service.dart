@@ -197,10 +197,10 @@ class MessageService {
     );
   }
 
-  Future<void> sendRunUpdatedMessage(String runId, String updateDescription) async {
+  Future<void> sendRunUpdatedMessage(String runId, String updatedByUserName) async {
     await sendSystemMessage(
       runId: runId,
-      content: 'Run updated: $updateDescription',
+      content: 'Run details updated by $updatedByUserName',
     );
   }
 

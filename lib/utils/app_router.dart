@@ -11,8 +11,14 @@ import '../screens/runs/run_details_screen.dart';
 import '../screens/runs/create_run_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
+import '../screens/profile/verification_screen.dart';
 import '../screens/chat/chat_screen.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/settings/safety_screen.dart';
+import '../screens/settings/privacy_settings_screen.dart';
+import '../screens/settings/emergency_settings_screen.dart';
+import '../screens/settings/safety_guidelines_screen.dart';
+import '../screens/settings/language_settings_screen.dart';
 import '../screens/messages/messages_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -100,6 +106,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const EditProfileScreen(),
       ),
       GoRoute(
+        path: '/verification',
+        name: 'verification',
+        builder: (context, state) => const VerificationScreen(),
+      ),
+      GoRoute(
         path: '/chat/:runId',
         name: 'chat',
         builder: (context, state) => ChatScreen(
@@ -110,6 +121,31 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/settings',
         name: 'settings',
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/safety',
+        name: 'safety',
+        builder: (context, state) => const SafetyScreen(),
+      ),
+      GoRoute(
+        path: '/privacy-settings',
+        name: 'privacy-settings',
+        builder: (context, state) => const PrivacySettingsScreen(),
+      ),
+      GoRoute(
+        path: '/emergency-settings',
+        name: 'emergency-settings',
+        builder: (context, state) => const EmergencySettingsScreen(),
+      ),
+      GoRoute(
+        path: '/safety-guidelines',
+        name: 'safety-guidelines',
+        builder: (context, state) => const SafetyGuidelinesScreen(),
+      ),
+      GoRoute(
+        path: '/language-settings',
+        name: 'language-settings',
+        builder: (context, state) => const LanguageSettingsScreen(),
       ),
     ],
   );

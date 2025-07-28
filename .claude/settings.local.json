@@ -27,7 +27,9 @@
       "Bash(timeout 30 flutter build:*)",
       "Bash(dart compile:*)",
       "Bash(./gradlew:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(firebase:*)"
     ],
     "deny": []
   }

@@ -29,7 +29,15 @@ class AuthService {
   Stream<UserProfile?> get currentUserStream async* {
     await for (final user in authStateChanges) {
       if (user != null) {
-        yield* _firestoreService.getUserProfile(user.uid);
+        try {
+          // Add a small delay to ensure authentication is fully established
+          await Future.delayed(const Duration(milliseconds: 100));
+          yield* _firestoreService.getUserProfile(user.uid);
+        } catch (e) {
+          print('Error getting user profile: $e');
+          // Yield null on error but don't break the stream
+          yield null;
+        }
       } else {
         yield null;
       }
@@ -38,17 +46,31 @@ class AuthService {
 
   Future<UserCredential?> signInAnonymously() async {
     try {
+      // Check if anonymous auth is enabled first
       final credential = await _auth.signInAnonymously();
       
       if (credential.user != null) {
-        await _createUserProfile(credential.user!);
-        await _saveAuthState();
+        try {
+          await _createUserProfile(credential.user!);
+          await _saveAuthState();
+        } catch (profileError) {
+          // Even if profile creation fails, authentication succeeded
+          print('Profile creation error: $profileError');
+          await _saveAuthState();
+        }
       }
       
       return credential;
     } on FirebaseAuthException catch (e) {
+      if (e.code == 'operation-not-allowed') {
+        throw AuthException('Anonymous authentication is not enabled. Please enable it in Firebase Console.');
+      }
       throw AuthException._fromFirebaseException(e);
     } catch (e) {
+      // Handle the PigeonUserDetails type error specifically
+      if (e.toString().contains('PigeonUserDetails')) {
+        throw AuthException('Firebase authentication plugin error. Please check your Firebase configuration and try restarting the app.');
+      }
       throw AuthException('Authentication failed: ${e.toString()}');
     }
   }

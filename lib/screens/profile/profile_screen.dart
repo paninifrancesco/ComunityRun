@@ -82,6 +82,13 @@ class ProfileScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     ListTile(
+                      leading: const Icon(Icons.verified_user),
+                      title: const Text('Account Verification'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => context.push('/verification'),
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
                       leading: const Icon(Icons.settings),
                       title: const Text('Settings'),
                       trailing: const Icon(Icons.chevron_right),

@@ -16,11 +16,18 @@ class UserProfile {
   
   final String? stravaUserId;
   final Map<String, dynamic>? stravaProfile;
+  final bool isStravaVerified;
+  
+  final String? phoneNumber;
+  final bool isPhoneVerified;
+  final bool isEmailVerified;
   
   final int totalRuns;
   final double totalDistance;
   final List<String> blockedUsers;
   final List<String> reportedUsers;
+  final String? fcmToken;
+  final DateTime? lastTokenUpdate;
 
   const UserProfile({
     required this.uid,
@@ -36,10 +43,16 @@ class UserProfile {
     required this.safetySettings,
     this.stravaUserId,
     this.stravaProfile,
+    this.isStravaVerified = false,
+    this.phoneNumber,
+    this.isPhoneVerified = false,
+    this.isEmailVerified = false,
     this.totalRuns = 0,
     this.totalDistance = 0.0,
     this.blockedUsers = const [],
     this.reportedUsers = const [],
+    this.fcmToken,
+    this.lastTokenUpdate,
   });
 
   Map<String, dynamic> toMap() {
@@ -57,10 +70,16 @@ class UserProfile {
       'safetySettings': safetySettings.toMap(),
       'stravaUserId': stravaUserId,
       'stravaProfile': stravaProfile,
+      'isStravaVerified': isStravaVerified,
+      'phoneNumber': phoneNumber,
+      'isPhoneVerified': isPhoneVerified,
+      'isEmailVerified': isEmailVerified,
       'totalRuns': totalRuns,
       'totalDistance': totalDistance,
       'blockedUsers': blockedUsers,
       'reportedUsers': reportedUsers,
+      'fcmToken': fcmToken,
+      'lastTokenUpdate': lastTokenUpdate != null ? Timestamp.fromDate(lastTokenUpdate!) : null,
     };
   }
 
@@ -79,10 +98,16 @@ class UserProfile {
       safetySettings: SafetySettings.fromMap(map['safetySettings'] ?? {}),
       stravaUserId: map['stravaUserId'],
       stravaProfile: map['stravaProfile'],
+      isStravaVerified: map['isStravaVerified'] ?? false,
+      phoneNumber: map['phoneNumber'],
+      isPhoneVerified: map['isPhoneVerified'] ?? false,
+      isEmailVerified: map['isEmailVerified'] ?? false,
       totalRuns: map['totalRuns'] ?? 0,
       totalDistance: map['totalDistance']?.toDouble() ?? 0.0,
       blockedUsers: List<String>.from(map['blockedUsers'] ?? []),
       reportedUsers: List<String>.from(map['reportedUsers'] ?? []),
+      fcmToken: map['fcmToken'],
+      lastTokenUpdate: map['lastTokenUpdate'] != null ? (map['lastTokenUpdate'] as Timestamp).toDate() : null,
     );
   }
 
@@ -98,10 +123,16 @@ class UserProfile {
     SafetySettings? safetySettings,
     String? stravaUserId,
     Map<String, dynamic>? stravaProfile,
+    bool? isStravaVerified,
+    String? phoneNumber,
+    bool? isPhoneVerified,
+    bool? isEmailVerified,
     int? totalRuns,
     double? totalDistance,
     List<String>? blockedUsers,
     List<String>? reportedUsers,
+    String? fcmToken,
+    DateTime? lastTokenUpdate,
   }) {
     return UserProfile(
       uid: uid,
@@ -117,10 +148,16 @@ class UserProfile {
       safetySettings: safetySettings ?? this.safetySettings,
       stravaUserId: stravaUserId ?? this.stravaUserId,
       stravaProfile: stravaProfile ?? this.stravaProfile,
+      isStravaVerified: isStravaVerified ?? this.isStravaVerified,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      isPhoneVerified: isPhoneVerified ?? this.isPhoneVerified,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
       totalRuns: totalRuns ?? this.totalRuns,
       totalDistance: totalDistance ?? this.totalDistance,
       blockedUsers: blockedUsers ?? this.blockedUsers,
       reportedUsers: reportedUsers ?? this.reportedUsers,
+      fcmToken: fcmToken ?? this.fcmToken,
+      lastTokenUpdate: lastTokenUpdate ?? this.lastTokenUpdate,
     );
   }
 }

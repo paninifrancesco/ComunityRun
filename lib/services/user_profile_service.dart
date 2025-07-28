@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_profile.dart';
 import 'firestore_service.dart';
@@ -40,6 +41,17 @@ class UserProfileService {
       await _firestoreService.updateUserProfile(profile);
     } catch (e) {
       throw UserProfileServiceException('Failed to update user profile: ${e.toString()}');
+    }
+  }
+
+  Future<UserProfile?> getCurrentUserProfile() async {
+    try {
+      // Import firebase_auth to get current user
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+      return await getUserProfileOnce(user.uid);
+    } catch (e) {
+      throw UserProfileServiceException('Failed to get current user profile: ${e.toString()}');
     }
   }
 
