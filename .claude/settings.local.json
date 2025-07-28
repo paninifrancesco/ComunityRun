@@ -29,7 +29,8 @@
       "Bash(./gradlew:*)",
       "Bash(rg:*)",
       "Bash(find:*)",
-      "Bash(firebase:*)"
+      "Bash(firebase:*)",
+      "WebFetch(domain:developers.strava.com)"
     ],
     "deny": []
   }

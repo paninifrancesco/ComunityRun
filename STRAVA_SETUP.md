@@ -21,18 +21,21 @@ The app now includes complete Strava login functionality that allows users to:
    - Visit: https://developers.strava.com/
    - Click "Create App"
 
-2. **Fill App Details**
+2. **Fill App Details (Updated for 2025)**
    - **Application Name**: `CommunityRun`
    - **Category**: `Social Network`
    - **Club**: Leave blank (optional)
    - **Website**: Your app website or GitHub repo
    - **Application Description**: `Running community app that connects local runners`
    - **Authorization Callback Domain**: `communityrun://strava-callback`
+   
+   **Important**: Use the custom URL scheme format for mobile apps as per 2025 Strava guidelines
 
 3. **Submit and Get Credentials**
    - After creating the app, note down:
      - **Client ID** (public)
      - **Client Secret** (keep secret!)
+   - **Rate Limits**: 200 requests per 15 minutes, 2,000 requests per day
 
 ## 🔑 Step 2: Configure App Credentials
 
@@ -105,18 +108,26 @@ Add to `ios/Runner/Info.plist`:
    - Check that user profile is created with Strava data
    - Verify user is marked as Strava-verified
 
-## 🔄 Authentication Flow
+## 🔄 Authentication Flow (Updated 2025)
 
 ```
 1. User taps "Continue with Strava"
-2. App opens Strava authorization URL
-3. User authorizes in Strava
-4. Strava redirects to: communityrun://strava-callback?code=AUTH_CODE
-5. App handles callback and exchanges code for tokens
-6. App fetches Strava profile data
-7. App creates/updates Firebase user with Strava data
-8. User is signed in and redirected to home screen
+2. App opens mobile-optimized Strava authorization URL
+3. Strava app opens (if installed) or mobile web browser
+4. User authorizes the app in Strava
+5. Strava redirects to: communityrun://strava-callback?code=AUTH_CODE
+6. App handles deep link callback automatically
+7. App exchanges authorization code for access & refresh tokens
+8. App fetches Strava athlete profile data
+9. App creates anonymous Firebase user and links Strava data
+10. User is signed in with Strava verification badge
 ```
+
+**Key Improvements in 2025:**
+- Mobile-optimized authorization endpoints
+- Better token management with automatic refresh
+- Proper deauthorization support
+- Enhanced error handling and validation
 
 ## 🛠️ Troubleshooting
 
@@ -138,16 +149,18 @@ Add to `ios/Runner/Info.plist`:
 - Test URL scheme manually: `adb shell am start -W -a android.intent.action.VIEW -d "communityrun://strava-callback" com.communityrun.communityrun`
 - Ensure app is installed and URL scheme is registered
 
-## 📊 Features Available
+## 📊 Features Available (2025 Update)
 
 Once configured, users can:
 
-✅ **Sign in with Strava account**
+✅ **Sign in with Strava account** (mobile-optimized flow)
 ✅ **Import Strava profile data** (name, photo, bio)
 ✅ **Automatic Strava verification** badge
-✅ **Secure token storage** for API access
-✅ **Token refresh** handling
-✅ **Account disconnection** option
+✅ **Secure token storage** with encrypted preferences
+✅ **Automatic token refresh** (6-hour token expiry handling)
+✅ **Proper account disconnection** with Strava deauthorization
+✅ **Enhanced error handling** and user feedback
+✅ **Rate limit awareness** (200/15min, 2000/day)
 
 ## 🔒 Security Considerations
 

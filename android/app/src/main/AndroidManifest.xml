@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Internet permission for Strava API calls -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    
     <application
         android:label="communityrun"
         android:name="${applicationName}"
@@ -24,7 +27,8 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- Strava OAuth2 callback URL scheme -->
+            
+            <!-- Strava OAuth2 callback handling -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

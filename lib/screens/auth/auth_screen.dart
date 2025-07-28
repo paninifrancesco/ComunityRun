@@ -65,12 +65,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
     try {
       final stravaAuthService = ref.read(stravaAuthServiceProvider);
-      final success = await stravaAuthService.launchStravaAuth();
+      final authUrl = await stravaAuthService.launchStravaAuth();
       
-      if (success) {
-        // Show dialog explaining that user needs to return to app after authorization
+      if (authUrl != null) {
+        // Show dialog for manual code entry since Strava requires localhost callback
         if (mounted) {
-          _showStravaInstructionsDialog();
+          setState(() {
+            _isStravaLoading = false;
+          });
+          _showStravaCodeEntryDialog();
         }
       } else {
         if (mounted) {
@@ -100,37 +103,120 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     }
   }
 
-  void _showStravaInstructionsDialog() {
+  void _showStravaCodeEntryDialog() {
+    final codeController = TextEditingController();
+    bool isProcessing = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Strava Authentication'),
-        content: const Text(
-          'You will be redirected to Strava to authorize the app. After authorizing, please return to this app to complete the sign-in process.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // In a real implementation, you would handle the callback URL here
-              // For now, we'll show a placeholder message
-              _showStravaCallbackInfo();
-            },
-            child: const Text('OK'),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Enter Strava Code'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'After authorizing in Strava, copy the code from the localhost URL and paste it here:',
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Look for: localhost/?code=XXXXXX',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontFamily: 'monospace',
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: codeController,
+                decoration: const InputDecoration(
+                  labelText: 'Authorization Code',
+                  hintText: 'Paste the code here',
+                  border: OutlineInputBorder(),
+                ),
+                enabled: !isProcessing,
+              ),
+            ],
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: isProcessing ? null : () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: isProcessing ? null : () async {
+                final code = codeController.text.trim();
+                if (code.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter the authorization code'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
+
+                setState(() {
+                  isProcessing = true;
+                });
+
+                try {
+                  final stravaAuthService = ref.read(stravaAuthServiceProvider);
+                  final result = await stravaAuthService.handleAuthorizationCode(code);
+                  
+                  if (result.isSuccess && context.mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Successfully signed in with Strava!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    context.go('/home');
+                  } else if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(result.error ?? 'Authentication failed'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                } finally {
+                  if (mounted) {
+                    setState(() {
+                      isProcessing = false;
+                    });
+                  }
+                }
+              },
+              child: isProcessing 
+                  ? const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Sign In'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void _showStravaCallbackInfo() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Strava authentication is configured. Please set up your Strava app credentials.'),
-        duration: Duration(seconds: 4),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

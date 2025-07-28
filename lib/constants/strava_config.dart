@@ -8,28 +8,48 @@
 /// IMPORTANT: Never commit real credentials to version control!
 /// Consider using environment variables or a separate config file.
 
+import 'package:flutter/foundation.dart';
+
 class StravaConfig {
   // TODO: Replace with your actual Strava app credentials
-  static const String clientId = 'YOUR_STRAVA_CLIENT_ID';
-  static const String clientSecret = 'YOUR_STRAVA_CLIENT_SECRET';
+  // These are placeholder values - replace with your real Strava app credentials
+  static const String clientId = '75862';
+  static const String clientSecret = '97affdfd17cc631ea698d30b12e1b2756e363c2d';
   
   // The redirect URI registered in your Strava app
-  // This should match the URL scheme configured in your app
+  // Updated for mobile app deep linking per 2025 guidelines
   static const String redirectUri = 'communityrun://strava-callback';
   
   // Strava OAuth2 scopes - what permissions your app requests
+  // Updated scopes per 2025 API recommendations
   static const List<String> scopes = [
     'read',                  // Read public profile information
-    'activity:read_all',     // Read all activity data  
-    'profile:read_all',      // Read profile information
+    'profile:read_all',      // Read comprehensive profile information
+    'activity:read',         // Read basic activity data (recommended over activity:read_all)
   ];
   
   // Check if Strava credentials are properly configured
   static bool get isConfigured {
-    return clientId != 'YOUR_STRAVA_CLIENT_ID' && 
-           clientSecret != 'YOUR_STRAVA_CLIENT_SECRET' &&
+    final bool configured = clientId != 'YOUR_ACTUAL_CLIENT_ID_HERE' && 
+           clientSecret != 'YOUR_ACTUAL_CLIENT_SECRET_HERE' &&
            clientId.isNotEmpty && 
            clientSecret.isNotEmpty;
+    
+    // Debug logging for configuration status
+    if (kDebugMode) {
+      print('🔵 [STRAVA CONFIG] Configuration check:');
+      print('🔵 [STRAVA CONFIG] Client ID is not placeholder: ${clientId != '75862'}');
+      print('🔵 [STRAVA CONFIG] Client Secret is not placeholder: ${clientSecret != '97affdfd17cc631ea698d30b12e1b2756e363c2d'}');
+      print('🔵 [STRAVA CONFIG] Client ID not empty: ${clientId.isNotEmpty}');
+      print('🔵 [STRAVA CONFIG] Client Secret not empty: ${clientSecret.isNotEmpty}');
+      print('🔵 [STRAVA CONFIG] Overall configured: $configured');
+      if (!configured) {
+        print('❌ [STRAVA CONFIG] Strava is NOT properly configured!');
+        print('❌ [STRAVA CONFIG] Please update the credentials in StravaConfig');
+      }
+    }
+    
+    return configured;
   }
 }
 
@@ -44,38 +64,26 @@ class StravaConfig {
 ///      * Club: (optional)
 ///      * Website: Your app website
 ///      * Application Description: Running community app
-///      * Authorization Callback Domain: communityrun://strava-callback
+///      * Authorization Callback Domain: localhost
 ///    - After creating, note down your Client ID and Client Secret
 /// 
 /// 2. UPDATE CONFIGURATION:
 ///    - Replace 'YOUR_STRAVA_CLIENT_ID' with your actual Client ID
 ///    - Replace 'YOUR_STRAVA_CLIENT_SECRET' with your actual Client Secret
+///    - Update the placeholders in the StravaConfig class above
 /// 
-/// 3. URL SCHEME SETUP (Android):
-///    Add to android/app/src/main/AndroidManifest.xml inside <activity> tag:
+/// 3. AUTHENTICATION FLOW:
+///    - User taps "Continue with Strava" 
+///    - App opens Strava authorization in browser
+///    - User authorizes the app in Strava
+///    - Strava redirects to localhost with authorization code
+///    - User copies the code from the browser URL
+///    - User pastes the code in the app dialog
+///    - App exchanges code for access token and completes sign-in
+/// 
+/// 4. MANUAL CODE ENTRY:
+///    After Strava authorization, the browser will redirect to:
+///    http://localhost/?code=AUTHORIZATION_CODE&scope=...
 ///    
-///    <intent-filter android:autoVerify="true">
-///        <action android:name="android.intent.action.VIEW" />
-///        <category android:name="android.intent.category.DEFAULT" />
-///        <category android:name="android.intent.category.BROWSABLE" />
-///        <data android:scheme="communityrun" android:host="strava-callback" />
-///    </intent-filter>
-/// 
-/// 4. URL SCHEME SETUP (iOS):
-///    Add to ios/Runner/Info.plist:
-///    
-///    <key>CFBundleURLTypes</key>
-///    <array>
-///        <dict>
-///            <key>CFBundleURLName</key>
-///            <string>communityrun.strava</string>
-///            <key>CFBundleURLSchemes</key>
-///            <array>
-///                <string>communityrun</string>
-///            </array>
-///        </dict>
-///    </array>
-/// 
-/// 5. HANDLE DEEP LINKS:
-///    The app will automatically handle the callback URL when users
-///    return from Strava authorization.
+///    Users should copy the AUTHORIZATION_CODE part and paste it
+///    into the app's code entry dialog.
